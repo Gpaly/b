@@ -1,0 +1,29 @@
+module Multiplexer(
+    input [3:0] D,  // 4 inputs
+    input [1:0] Sel, // 2-bit selector
+    output Y
+);
+    assign Y = (Sel == 2'b00) ? D[0] :
+               (Sel == 2'b01) ? D[1] :
+               (Sel == 2'b10) ? D[2] :
+               D[3];
+endmodule
+
+TEST BENCH
+
+module tb_Multiplexer;
+    reg [3:0] D;
+    reg [1:0] Sel;
+    wire Y;
+
+    Multiplexer uut (.D(D), .Sel(Sel), .Y(Y));
+
+    initial begin
+        $monitor("D=%b Sel=%b | Y=%b", D, Sel, Y);
+        D = 4'b1101; Sel = 2'b00; #10;
+        Sel = 2'b01; #10;
+        Sel = 2'b10; #10;
+        Sel = 2'b11; #10;
+        $finish;
+    end
+endmodule
