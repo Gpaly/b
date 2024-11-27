@@ -1,0 +1,31 @@
+module Counter(
+    input clk, reset,
+    output reg [3:0] count
+);
+    always @(posedge clk or posedge reset) begin
+        if (reset)
+            count <= 4'b0000;
+        else
+            count <= count + 1;
+    end
+endmodule
+
+TEST BENCH
+
+module tb_Counter;
+    reg clk, reset;
+    wire [3:0] count;
+
+    Counter uut (.clk(clk), .reset(reset), .count(count));
+
+    initial begin
+        clk = 0; forever #5 clk = ~clk;
+    end
+
+    initial begin
+        $monitor("Time=%0t Reset=%b | Count=%b", $time, reset, count);
+        reset = 1; #10;
+        reset = 0; #100;
+        $finish;
+    end
+endmodule

@@ -1,0 +1,36 @@
+module ShiftRegister(
+    input clk, reset, load,
+    input [3:0] D,
+    output reg [3:0] Q
+);
+    always @(posedge clk or posedge reset) begin
+        if (reset)
+            Q <= 4'b0000;
+        else if (load)
+            Q <= D;
+        else
+            Q <= Q << 1;
+    end
+endmodule
+
+TEST BENCH
+
+module tb_ShiftRegister;
+    reg clk, reset, load;
+    reg [3:0] D;
+    wire [3:0] Q;
+
+    ShiftRegister uut (.clk(clk), .reset(reset), .load(load), .D(D), .Q(Q));
+
+    initial begin
+        clk = 0; forever #5 clk = ~clk;
+    end
+
+    initial begin
+        $monitor("Time=%0t Reset=%b Load=%b D=%b | Q=%b", $time, reset, load, D, Q);
+        reset = 1; load = 0; #10;
+        reset = 0; load = 1; D = 4'b1010; #10;
+        load = 0; #50;
+        $finish;
+    end
+endmodule

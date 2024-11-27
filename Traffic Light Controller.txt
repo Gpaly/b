@@ -1,0 +1,42 @@
+module TrafficLightController(
+    input clk, reset,
+    output reg [2:0] Lights // Red, Yellow, Green
+);
+    reg [1:0] state;
+
+    always @(posedge clk or posedge reset) begin
+        if (reset)
+            state <= 2'b00; // Red state
+        else
+            state <= state + 1;
+    end
+
+    always @(*) begin
+        case (state)
+            2'b00: Lights = 3'b100; // Red
+            2'b01: Lights = 3'b010; // Yellow
+            2'b10: Lights = 3'b001; // Green
+            default: Lights = 3'b100; // Default to Red
+        endcase
+    end
+endmodule
+ 
+TEST BENCH
+
+module tb_TrafficLightController;
+    reg clk, reset;
+    wire [2:0] Lights;
+
+    TrafficLightController uut (.clk(clk), .reset(reset), .Lights(Lights));
+
+    initial begin
+        clk = 0; forever #5 clk = ~clk;
+    end
+
+    initial begin
+        $monitor("Time=%0t Reset=%b | Lights=%b", $time, reset, Lights);
+        reset = 1; #10;
+        reset = 0; #50;
+        $finish;
+    end
+endmodule

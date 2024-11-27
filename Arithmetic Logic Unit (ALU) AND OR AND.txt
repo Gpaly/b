@@ -1,0 +1,36 @@
+module ALU(
+    input [3:0] A, B,
+    input [1:0] Sel,
+    output reg [3:0] Result,
+    output reg CarryOut
+);
+    always @(*) begin
+        case (Sel)
+            2'b00: {CarryOut, Result} = A + B; // Addition
+            2'b01: {CarryOut, Result} = A - B; // Subtraction
+            2'b10: Result = A & B;             // AND
+            2'b11: Result = A | B;             // OR
+            default: Result = 4'b0000;
+        endcase
+    end
+endmodule
+
+TEST BENCH
+
+module tb_ALU;
+    reg [3:0] A, B;
+    reg [1:0] Sel;
+    wire [3:0] Result;
+    wire CarryOut;
+
+    ALU uut (.A(A), .B(B), .Sel(Sel), .Result(Result), .CarryOut(CarryOut));
+
+    initial begin
+        $monitor("A=%b B=%b Sel=%b | Result=%b CarryOut=%b", A, B, Sel, Result, CarryOut);
+        A = 4'b0101; B = 4'b0011; Sel = 2'b00; #10; // Add
+        Sel = 2'b01; #10; // Subtract
+        Sel = 2'b10; #10; // AND
+        Sel = 2'b11; #10; // OR
+        $finish;
+    end
+endmodule
