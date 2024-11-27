@@ -1,0 +1,25 @@
+module FullSubtractor(
+    input A, B, Bin,
+    output Diff, Bout
+);
+    assign Diff = A ^ B ^ Bin;  // Difference calculation
+    assign Bout = (~A & B) | (~A & Bin) | (B & Bin); // Borrow-out calculation
+endmodule
+
+TEST BENCH
+
+module tb_FullSubtractor;
+    reg A, B, Bin;
+    wire Diff, Bout;
+
+    FullSubtractor uut (.A(A), .B(B), .Bin(Bin), .Diff(Diff), .Bout(Bout));
+
+    initial begin
+        $monitor("A=%b B=%b Bin=%b | Diff=%b Bout=%b", A, B, Bin, Diff, Bout);
+        A = 0; B = 0; Bin = 0; #10;
+        A = 0; B = 1; Bin = 0; #10;
+        A = 1; B = 0; Bin = 0; #10;
+        A = 1; B = 1; Bin = 1; #10;
+        $finish;
+    end
+endmodule

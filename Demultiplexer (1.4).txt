@@ -1,0 +1,35 @@
+module Demultiplexer(
+    input In,
+    input [1:0] Sel,
+    output reg [3:0] Out
+);
+    always @(*) begin
+        Out = 4'b0000; // Default all outputs to 0
+        case (Sel)
+            2'b00: Out[0] = In;
+            2'b01: Out[1] = In;
+            2'b10: Out[2] = In;
+            2'b11: Out[3] = In;
+        endcase
+    end
+endmodule
+ 
+TEST BENCH
+
+module tb_Demultiplexer;
+    reg In;
+    reg [1:0] Sel;
+    wire [3:0] Out;
+
+    Demultiplexer uut (.In(In), .Sel(Sel), .Out(Out));
+
+    initial begin
+        $monitor("In=%b Sel=%b | Out=%b", In, Sel, Out);
+        In = 1; Sel = 2'b00; #10;
+        Sel = 2'b01; #10;
+        Sel = 2'b10; #10;
+        Sel = 2'b11; #10;
+        In = 0; Sel = 2'b01; #10;
+        $finish;
+    end
+endmodule

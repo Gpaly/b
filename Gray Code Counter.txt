@@ -1,0 +1,38 @@
+module GrayCodeCounter(
+    input clk, reset,
+    output reg [3:0] gray_code
+);
+    reg [3:0] binary_count;
+
+    always @(posedge clk or posedge reset) begin
+        if (reset)
+            binary_count <= 4'b0000; // Reset binary count
+        else
+            binary_count <= binary_count + 1; // Increment binary count
+    end
+
+    always @(*) begin
+        gray_code = binary_count ^ (binary_count >> 1); // Convert to Gray code
+    end
+endmodule
+
+TEST BENCH
+
+module tb_GrayCodeCounter;
+    reg clk, reset;
+    wire [3:0] gray_code;
+
+    GrayCodeCounter uut (.clk(clk), .reset(reset), .gray_code(gray_code));
+
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk; // Clock with 10-time unit period
+    end
+
+    initial begin
+        $monitor("Time=%0t Reset=%b | Gray Code=%b", $time, reset, gray_code);
+        reset = 1; #10;  // Reset the counter
+        reset = 0; #100; // Observe the Gray code sequence
+        $finish;
+    end
+endmodule
